@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Q&A System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>AI-Powered Question and Answer System</h1>
+        <p>Ask questions and get instant answers!</p>
+    </header>
+
+    <nav>
+        <ul>
+            <!-- Левый блок иконок -->
+            <li>
+                <a href="#" onclick="showSection('qa')">
+                    <img src="https://i.pinimg.com/736x/c3/4d/28/c34d286dac2c20da53e4cec2461599cc.jpg" alt="Q&A" style="width: 40px; height: 40px;">
+                </a>
+            </li>
+        </ul>
+    
+        <!-- Правый блок иконок -->
+        <ul class="right">
+            <li>
+                <a href="#" onclick="showSection('profile')">
+                    <img src="https://i.pinimg.com/originals/1f/28/c6/1f28c68d2c35f389966b5a363b992d06.png" alt="Q&A" style="width: 40px; height: 40px;">
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('login')" class="user-icon">
+                    <img src="https://banner2.cleanpng.com/20180502/tuq/kisspng-computer-icons-login-the-property-managers-5aea63244b0c95.5836591115253102443074.jpg" alt="Кіру">
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Секция входа и регистрации -->
+    <section id="login-section" class="content">
+        <h2>Login / Register</h2>
+        <input type="text" id="register-name" placeholder="Name" style="display: none;">
+        <input type="email" id="login-email" placeholder="Email">
+        <input type="password" id="login-password" placeholder="Password">
+        <button onclick="login()">Log In</button>
+        <button onclick="toggleRegister()">Register</button>
+        <div id="login-message"></div>
+    </section>
+
+    <!-- Секция вопросов и ответов -->
+    <section id="qa-section" class="content" style="display: none;">
+        <h2>Ask a Question</h2>
+        <input type="text" id="question-input" placeholder="Enter your question">
+        <button onclick="getAnswer()">Submit</button>
+        <div id="answer"></div>
+    </section>
+
+    <!-- Секция профиля -->
+<section id="profile-section" class="content" style="display: none;">
+    <h2>Profile</h2>
+    <p id="profile-info">Вы не вошли в систему.</p>
+</section>
+
+
+    <footer>
+        <p>Powered by NLP Technology</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
