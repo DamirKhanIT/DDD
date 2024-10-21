@@ -1,84 +1,127 @@
-// Функция для отображения выбранной секции
-function showSection(section) {
-    // Скрыть все секции
-    const sections = document.querySelectorAll('.content');
-    sections.forEach(s => s.style.display = 'none');
-    
-    // Показать выбранную секцию
-    document.getElementById(`${section}-section`).style.display = 'block';
-}
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Переключение между регистрацией и входом
-function toggleRegister() {
-    const registerNameInput = document.getElementById('register-name');
-    const loginSection = document.getElementById('login-section');
+function App() {
+  const [users, setUsers] = useState([]); // Store users data
+  const [section, setSection] = useState('login'); // Control which section to show
+  const [loginMessage, setLoginMessage] = useState(''); // Store login error message
+  const [profileInfo, setProfileInfo] = useState(''); // Store profile info
 
-    if (registerNameInput.style.display === 'none') {
-        registerNameInput.style.display = 'block';
-        loginSection.querySelector('h2').innerText = 'Register';
-        loginSection.querySelector('button').innerText = 'Register';
+  // Form state for login
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+
+  // Form state for register
+  const [registerName, setRegisterName] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+
+  // Fetch users when the component first renders
+  useEffect(() => {
+    axios.get('https://jsonplaceholder.typicode.com/users')
+      .then((response) => setUsers(response.data))
+      .catch((error) => console.error('Error fetching users:', error));
+  }, []);
+
+  const showSection = (selectedSection) => {
+    setSection(selectedSection); 
+  };
+
+  const login = () => {
+    if (loginEmail && loginPassword) {
+      setProfileInfo(`Logged in as ${loginEmail}`);
+      setLoginMessage(''); // Clear the login message
+      showSection('profile');
     } else {
-        registerNameInput.style.display = 'none';
-        loginSection.querySelector('h2').innerText = 'Login';
-        loginSection.querySelector('button').innerText = 'Log In';
+      setLoginMessage('Please fill in all fields.');
     }
+  };
+
+  const register = async () => {
+    if (!registerName || !registerEmail || !registerPassword) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    alert('Registration successful');
+    // Add logic here to send data to the server
+  };
+
+  return (
+    <div className="App">
+      <h1>React App with Sections & Users</h1>
+
+      {/* Navigation */}
+      <nav>
+        <button onClick={() => showSection('login')}>Login</button>
+        <button onClick={() => showSection('register')}>Register</button>
+        <button onClick={() => showSection('profile')}>Profile</button>
+      </nav>
+
+      {/* Display sections based on state */}
+      {section === 'login' && (
+        <div id="login-section">
+          <h2>Login</h2>
+          <input
+            type="email"
+            placeholder="Email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)} // Use state for controlled input
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)} // Use state for controlled input
+          />
+          <button onClick={login}>Log In</button>
+          <p style={{ color: 'red' }}>{loginMessage}</p> {/* Show login message */}
+        </div>
+      )}
+
+      {section === 'register' && (
+        <div id="register-section">
+          <h2>Register</h2>
+          <input
+            type="text"
+            placeholder="Name"
+            value={registerName}
+            onChange={(e) => setRegisterName(e.target.value)} // Use state for controlled input
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={registerEmail}
+            onChange={(e) => setRegisterEmail(e.target.value)} // Use state for controlled input
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={registerPassword}
+            onChange={(e) => setRegisterPassword(e.target.value)} // Use state for controlled input
+          />
+          <button onClick={register}>Register</button>
+        </div>
+      )}
+
+      {section === 'profile' && (
+        <div id="profile-section">
+          <h2>Profile</h2>
+          <p id="profile-info">{profileInfo}</p> {/* Show profile info */}
+        </div>
+      )}
+
+      {/* Users list */}
+      <h2>Пайдаланушылар тізімі</h2>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            {user.name} - {user.email}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-// Логика входа
-function login() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    if (email && password) {
-        document.getElementById('profile-info').innerText = `Logged in as ${email}`;
-        showSection('profile');
-    } else {
-        document.getElementById('login-message').innerText = 'Please fill in all fields.';
-    }
-}
-
-// Асинхронная регистрация с сервером
-async function register() {
-    const name = document.getElementById('register-name').value;
-    const email = document.getElementById('register-email').value;
-    const password = document.getElementById('register-password').value;
-    const messageDiv = document.getElementById('register-message');
-
-    if (!name || !email || !password) {
-        messageDiv.textContent = "Пожалуйста, заполните все поля.";
-        return;
-    }
-
-    try {
-        const response = await fetch('http://localhost:5000/api/users/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name, email, password }),
-        });
-        const data = await response.json();
-        messageDiv.textContent = data.message;
-
-        if (response.ok) {
-            document.getElementById('register-name').value = '';
-            document.getElementById('register-email').value = '';
-            document.getElementById('register-password').value = '';
-            showSection('login');
-        }
-    } catch (error) {
-        messageDiv.textContent = "Ошибка регистрации.";
-    }
-}
-
-// Функция для получения ответа на вопрос (заглушка)
-async function getAnswer() {
-    const question = document.getElementById('question-input').value;
-
-    if (question) {
-        const answer = "This is a dummy answer for your question."; // Заглушка
-        document.getElementById('answer').innerText = answer;
-    } else {
-        document.getElementById('answer').innerText = 'Please enter a question.';
-    }
-}
+export default App;
